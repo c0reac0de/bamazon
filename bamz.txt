@@ -1,0 +1,23 @@
+drop if exists
+created database
+use database
+created table
+table fields
+    id unique
+    product name
+    department name
+    price
+    stock
+
+create mock data
+create node app bamazon.js
+    prompt user 
+        ask for product id
+        how many
+        place order 
+check stock
+    insufficient quantity
+update sql to fulfil order-deplete stock
+                          -complete customer order
+
+
