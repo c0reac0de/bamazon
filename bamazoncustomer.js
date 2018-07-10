@@ -7,48 +7,76 @@ var inquirer = require ("inquirer");
 //BASIC TASKS
 //display all products to user
 
-var con= mysql.createConnection({
+var connection= mysql.createConnection({
     host: "localhost",
+    port:3306,
     user: "root",
     password: "password",
     database: "bamazon_db"
 });
 
-con.connect(function(err){
-    if(err) throw err;
-    con.query('select * from products'), function (err, result, fields){
+connection.connect(function(err){
+    if(err) {
+        console.log("error in connection");
+    }
+    connection.query('SELECT * FROM products', function (err, result){
         if (err) throw err;
         console.log(result);
-    };
+        chooseProduct();
+    });
+    
 });
 
 
 //using inquirer module/ prompt
 //create function to ask 
-// function chooseProduct(argument/parameters needed){
-//     inquirer.prompt([
-//         //user which product they want
-//         {
-//             "product_id":"product_id",
-//             "type":"input",
-//             "message": "what product would you like?"
-//         },
-//         //quantity of product needed
-//         {
-//             "stock_quantity":"stock_quantity",
-//             "type":"input",
-//             "message": "how many units of this product would you like?"
-//         }
-//     ]).then(answers)
-// }
+function chooseProduct(){
+  inquirer.prompt([
+         //ask user which product they want
+        {
+        name:"product_name",
+        type: "input",
+        message: "what product would you like?"
+        },           
+    //quantity of product needed
+        {
+            name:"stock_quantity",
+            message: "how many units would you like?",
+            validate: function(value) {
+                if (isNaN(value) === false) {
+                  return true;
+                }
+                return false;
+              }
+        },
+            //parse user input
+])
+    .then(function(answer){
+        
+    console.log("you have ordered "+answer.stock_quantity+ " units of "+answer.product_name);
+    placeOrder();
+    })
+};
 
+function placeOrder(){
+    inquirer.prompt([
+        {
+            name:"confirm",
+            type:"confirm",
+            message:"finalize order?"
+        }
+    ])
+    .then (function(answer){
+        console.log("There are"+stock_quantity + answer.product_name +"in stock");
+        var query="select * from products where ?";
+       connection.query(query, [answer.product_name,answer.stock_quantity], function(err,result){
+            console.log(answer.stock_quantity+ "units selected for user");
+            query+= "alter table products where #this.stockquantity from products where (product name=answer.product_name"
+                  
+        })
+        console.log("order ready for customer");
+    }
 
-//confirm order placed
-
-//check if stock allows purchase
-    //if not= "insufficient quantity!" throw error or return
-    //else 
-    //update sql db to decrease stock
-    //show customer their total cost
-
-
+    )};
+//if order placed, ask if user wants to purchase more or end order.
+//chooseProduct();
